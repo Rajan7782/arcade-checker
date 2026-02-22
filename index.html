@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Arcade Point Checker</title>
+</head>
+<body>
+  <h2>Google Arcade Point Checker</h2>
+
+  <input type="text" id="profile" placeholder="Enter Public Profile URL" size="50">
+  <button onclick="checkPoints()">Check Points</button>
+
+  <h3 id="result"></h3>
+
+  <script>
+    async function checkPoints() {
+      const profile = document.getElementById("profile").value;
+      const res = await fetch("/.netlify/functions/checkPoints?url=" + encodeURIComponent(profile));
+      const data = await res.json();
+
+      if (data.error) {
+        document.getElementById("result").innerText = "Error: " + data.error;
+      } else {
+        document.getElementById("result").innerText =
+          "Game Badges: " + data.game_badges +
+          " | Skill Badges: " + data.skill_badges +
+          " | Total Points: " + data.total_points;
+      }
+    }
+  </script>
+</body>
+</html>
