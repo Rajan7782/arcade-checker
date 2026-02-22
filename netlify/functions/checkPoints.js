@@ -1,5 +1,4 @@
 const axios = require("axios");
-const cheerio = require("cheerio");
 
 exports.handler = async (event) => {
   try {
@@ -13,25 +12,19 @@ exports.handler = async (event) => {
     }
 
     const response = await axios.get(url, {
-      headers: { "User-Agent": "Mozilla/5.0" }
-    });
-
-    const $ = cheerio.load(response.data);
-
-    let gameBadges = 0;
-    let skillBadges = 0;
-
-    $("h3").each((i, el) => {
-      const text = $(el).text().toLowerCase();
-
-      if (text.includes("arcade") || text.includes("trivia") || text.includes("sprint")) {
-        gameBadges++;
-      }
-
-      if (text.includes("skill badge")) {
-        skillBadges++;
+      headers: {
+        "User-Agent": "Mozilla/5.0"
       }
     });
+
+    const html = response.data.toLowerCase();
+
+    // Count occurrences using text search
+    const gameMatches = html.match(/arcade|trivia|sprint/g) || [];
+    const skillMatches = html.match(/skill badge/g) || [];
+
+    const gameBadges = gameMatches.length;
+    const skillBadges = skillMatches.length;
 
     const totalPoints = gameBadges + Math.floor(skillBadges / 2);
 
